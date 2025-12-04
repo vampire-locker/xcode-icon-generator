@@ -12,7 +12,7 @@ A Python tool that automatically generates all required iOS/iPadOS app icon size
 - 🚀 **One Command Generation**: Generate all 13 icon sizes required by Xcode
 - ✅ **Xcode Ready**: Automatically creates `Contents.json` configuration file
 - 🔍 **Input Validation**: Checks image format, size, and transparency
-- 🎨 **Auto Scaling**: Optionally scale non-1024 images automatically
+- 🎨 **Auto Downscaling**: Optionally downscale high-resolution images (>1024px) to 1024×1024
 - 📦 **Zero Configuration**: Works out of the box with sensible defaults
 - 💻 **CLI & Interactive**: Supports both command-line arguments and interactive mode
 
@@ -66,8 +66,8 @@ python batch_resize_icon.py icon_1024.png
 # Specify custom output directory
 python batch_resize_icon.py icon_1024.png -o MyAppIcon.appiconset
 
-# Auto-scale non-1024x1024 images
-python batch_resize_icon.py icon_512.png --auto-scale
+# Auto-downscale high-resolution images (e.g., 2048x2048 to 1024x1024)
+python batch_resize_icon.py icon_2048.png --auto-scale
 
 # Enable verbose output
 python batch_resize_icon.py icon_1024.png -v
@@ -79,7 +79,7 @@ python batch_resize_icon.py icon_1024.png -v
 |--------|-------------|
 | `input_image` | Path to source image (preferably 1024×1024 PNG) |
 | `-o, --output DIR` | Custom output directory name |
-| `-a, --auto-scale` | Automatically scale non-1024×1024 images |
+| `-a, --auto-scale` | Automatically downscale images larger than 1024×1024 (upscaling not supported) |
 | `-v, --verbose` | Enable verbose output |
 | `--version` | Show version information |
 | `-h, --help` | Show help message |
@@ -126,11 +126,12 @@ You can now drag the 'AppIcon.appiconset_1701234567' folder into Xcode.
 
 ## Troubleshooting
 
-### "Image must be 1024x1024"
-Your source image is not the correct size. Use `--auto-scale` to automatically resize it:
-```bash
-python batch_resize_icon.py icon.png --auto-scale
-```
+### "Image must be 1024x1024" or size error
+- **If your image is larger than 1024×1024**: Use `--auto-scale` to automatically downscale it:
+  ```bash
+  python batch_resize_icon.py large_icon_2048.png --auto-scale
+  ```
+- **If your image is smaller than 1024×1024**: You must use a higher quality source image. Upscaling will produce blurry icons that may fail App Store review. Please create or obtain a proper 1024×1024 source image.
 
 ### "Unsupported format"
 The tool only supports PNG, JPG, and JPEG formats. Convert your image first.
@@ -159,7 +160,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Added command-line argument support
 - Added input validation and error handling
 - Fixed deprecated PIL API usage
-- Added auto-scaling feature
+- **Improved auto-scaling feature**: Now only allows downscaling from high-resolution images (>1024px) to prevent blurry icons from upscaling
 - Improved logging and user feedback
 - Added comprehensive documentation
 

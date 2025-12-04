@@ -99,17 +99,27 @@ class IconResizer:
 
                 # Check if image is 1024x1024 or can be scaled
                 if width != self.SOURCE_SIZE:
-                    if self.auto_scale:
-                        logger.warning(
-                            f"Image size is {width}x{height}, will be scaled to "
-                            f"{self.SOURCE_SIZE}x{self.SOURCE_SIZE}"
+                    if width < self.SOURCE_SIZE:
+                        # Upscaling is not allowed - will produce blurry icons
+                        raise ValueError(
+                            f"Image size is {width}x{height}, which is smaller than required "
+                            f"{self.SOURCE_SIZE}x{self.SOURCE_SIZE}. "
+                            f"Upscaling small images will result in blurry icons and may fail App Store review. "
+                            f"Please use a high-quality source image of at least {self.SOURCE_SIZE}x{self.SOURCE_SIZE}."
                         )
                     else:
-                        raise ValueError(
-                            f"Image must be {self.SOURCE_SIZE}x{self.SOURCE_SIZE}. "
-                            f"Current size: {width}x{height}. "
-                            f"Use --auto-scale to automatically resize."
-                        )
+                        # Downscaling is allowed with --auto-scale flag
+                        if self.auto_scale:
+                            logger.info(
+                                f"Image size is {width}x{height}, will be downscaled to "
+                                f"{self.SOURCE_SIZE}x{self.SOURCE_SIZE}"
+                            )
+                        else:
+                            raise ValueError(
+                                f"Image size is {width}x{height}, larger than required "
+                                f"{self.SOURCE_SIZE}x{self.SOURCE_SIZE}. "
+                                f"Use --auto-scale to automatically downscale to {self.SOURCE_SIZE}x{self.SOURCE_SIZE}."
+                            )
 
                 # Check if image has transparency (recommended for iOS icons)
                 if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
@@ -154,13 +164,20 @@ class IconResizer:
         if img.mode != 'RGBA':
             img = img.convert('RGBA')
 
-        # Scale to 1024x1024 if needed
+        # Downscale to 1024x1024 if needed (only downscaling is allowed)
         if img.size[0] != self.SOURCE_SIZE and self.auto_scale:
-            logger.info(f"Scaling image from {img.size[0]}x{img.size[1]} to {self.SOURCE_SIZE}x{self.SOURCE_SIZE}")
-            img = img.resize(
-                (self.SOURCE_SIZE, self.SOURCE_SIZE),
-                Image.Resampling.LANCZOS
-            )
+            if img.size[0] > self.SOURCE_SIZE:
+                logger.info(f"Downscaling image from {img.size[0]}x{img.size[1]} to {self.SOURCE_SIZE}x{self.SOURCE_SIZE}")
+                img = img.resize(
+                    (self.SOURCE_SIZE, self.SOURCE_SIZE),
+                    Image.Resampling.LANCZOS
+                )
+            else:
+                # This should never happen due to validation, but added as safety check
+                raise ValueError(
+                    f"Cannot upscale image from {img.size[0]}x{img.size[1]} to {self.SOURCE_SIZE}x{self.SOURCE_SIZE}. "
+                    f"Upscaling will result in blurry icons."
+                )
 
         return img
 
@@ -248,7 +265,7 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         '-a', '--auto-scale',
         action='store_true',
-        help='Automatically scale non-1024x1024 images'
+        help='Automatically downscale images larger than 1024x1024 (upscaling is not supported)'
     )
 
     parser.add_argument(

@@ -12,7 +12,7 @@
 - 🚀 **一键生成**：生成 Xcode 所需的全部 13 种图标尺寸
 - ✅ **Xcode 就绪**：自动创建 `Contents.json` 配置文件
 - 🔍 **输入验证**：检查图片格式、尺寸和透明度
-- 🎨 **自动缩放**：可选自动缩放非 1024 尺寸的图片
+- 🎨 **自动缩小**：可选将高分辨率图片（>1024px）自动缩小至 1024×1024
 - 📦 **零配置**：开箱即用，使用合理的默认设置
 - 💻 **双模式**：支持命令行参数和交互式输入
 
@@ -66,8 +66,8 @@ python batch_resize_icon.py icon_1024.png
 # 指定自定义输出目录
 python batch_resize_icon.py icon_1024.png -o MyAppIcon.appiconset
 
-# 自动缩放非 1024x1024 的图片
-python batch_resize_icon.py icon_512.png --auto-scale
+# 自动缩小高分辨率图片（例如 2048x2048 缩小到 1024x1024）
+python batch_resize_icon.py icon_2048.png --auto-scale
 
 # 启用详细输出
 python batch_resize_icon.py icon_1024.png -v
@@ -79,7 +79,7 @@ python batch_resize_icon.py icon_1024.png -v
 |------|------|
 | `input_image` | 源图片路径（推荐 1024×1024 PNG 格式） |
 | `-o, --output DIR` | 自定义输出目录名称 |
-| `-a, --auto-scale` | 自动缩放非 1024×1024 的图片 |
+| `-a, --auto-scale` | 自动缩小大于 1024×1024 的图片（不支持放大） |
 | `-v, --verbose` | 启用详细输出 |
 | `--version` | 显示版本信息 |
 | `-h, --help` | 显示帮助信息 |
@@ -126,11 +126,12 @@ You can now drag the 'AppIcon.appiconset_1701234567' folder into Xcode.
 
 ## 常见问题
 
-### "Image must be 1024x1024"（图片必须是 1024x1024）
-您的源图片尺寸不正确。使用 `--auto-scale` 参数自动调整大小：
-```bash
-python batch_resize_icon.py icon.png --auto-scale
-```
+### "Image must be 1024x1024"（图片必须是 1024x1024）或尺寸错误
+- **如果您的图片大于 1024×1024**：使用 `--auto-scale` 参数自动缩小：
+  ```bash
+  python batch_resize_icon.py large_icon_2048.png --auto-scale
+  ```
+- **如果您的图片小于 1024×1024**：您必须使用更高质量的源图片。放大会产生模糊的图标，可能无法通过 App Store 审核。请创建或获取一个真正的 1024×1024 源图片。
 
 ### "Unsupported format"（不支持的格式）
 工具仅支持 PNG、JPG 和 JPEG 格式。请先转换您的图片。
@@ -159,7 +160,7 @@ python batch_resize_icon.py icon.png --auto-scale
 - 添加命令行参数支持
 - 添加输入验证和错误处理
 - 修复已弃用的 PIL API 使用
-- 添加自动缩放功能
+- **改进自动缩放功能**：现在只允许将高分辨率图片（>1024px）缩小，以防止放大产生模糊图标
 - 改进日志记录和用户反馈
 - 添加完整文档
 
