@@ -1,0 +1,4 @@
+# Python dependencies for Batch Resize Icon for Xcode
+# Install with: pip install -r requirements.txt
+
+Pillow>=10.0.0
