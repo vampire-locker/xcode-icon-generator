@@ -69,6 +69,9 @@ python batch_resize_icon.py icon_1024.png -o MyAppIcon.appiconset
 # Auto-downscale high-resolution images (e.g., 2048x2048 to 1024x1024)
 python batch_resize_icon.py icon_2048.png --auto-scale
 
+# Custom icon filename prefix (generates: icon_20.png, icon_29.png, etc.)
+python batch_resize_icon.py icon_1024.png --prefix icon_
+
 # Enable verbose output
 python batch_resize_icon.py icon_1024.png -v
 ```
@@ -80,6 +83,7 @@ python batch_resize_icon.py icon_1024.png -v
 | `input_image` | Path to source image (preferably 1024×1024 PNG) |
 | `-o, --output DIR` | Custom output directory name |
 | `-a, --auto-scale` | Automatically downscale images larger than 1024×1024 (upscaling not supported) |
+| `-p, --prefix PREFIX` | Custom prefix for icon filenames (default: "_") |
 | `-v, --verbose` | Enable verbose output |
 | `--version` | Show version information |
 | `-h, --help` | Show help message |
@@ -95,7 +99,7 @@ For optimal results, your source image should be:
 ## Output
 
 The tool creates a folder (e.g., `AppIcon.appiconset_1234567890`) containing:
-- 13 PNG files with all required icon sizes (named `_20.png`, `_29.png`, etc.)
+- 13 PNG files with all required icon sizes (default names: `_20.png`, `_29.png`, etc., or custom with `--prefix`)
 - `Contents.json` - Xcode configuration file
 
 You can drag the entire folder directly into your Xcode project's Assets.xcassets.

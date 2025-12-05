@@ -69,6 +69,9 @@ python batch_resize_icon.py icon_1024.png -o MyAppIcon.appiconset
 # 自动缩小高分辨率图片（例如 2048x2048 缩小到 1024x1024）
 python batch_resize_icon.py icon_2048.png --auto-scale
 
+# 自定义图标文件名前缀（生成：icon_20.png, icon_29.png 等）
+python batch_resize_icon.py icon_1024.png --prefix icon_
+
 # 启用详细输出
 python batch_resize_icon.py icon_1024.png -v
 ```
@@ -80,6 +83,7 @@ python batch_resize_icon.py icon_1024.png -v
 | `input_image` | 源图片路径（推荐 1024×1024 PNG 格式） |
 | `-o, --output DIR` | 自定义输出目录名称 |
 | `-a, --auto-scale` | 自动缩小大于 1024×1024 的图片（不支持放大） |
+| `-p, --prefix PREFIX` | 自定义图标文件名前缀（默认："_"） |
 | `-v, --verbose` | 启用详细输出 |
 | `--version` | 显示版本信息 |
 | `-h, --help` | 显示帮助信息 |
@@ -95,7 +99,7 @@ python batch_resize_icon.py icon_1024.png -v
 ## 输出结果
 
 工具会创建一个文件夹（例如 `AppIcon.appiconset_1234567890`），包含：
-- 13 个 PNG 文件，涵盖所有需要的图标尺寸（命名为 `_20.png`、`_29.png` 等）
+- 13 个 PNG 文件，涵盖所有需要的图标尺寸（默认命名：`_20.png`、`_29.png` 等，可通过 `--prefix` 自定义）
 - `Contents.json` - Xcode 配置文件
 
 您可以将整个文件夹直接拖入 Xcode 项目的 Assets.xcassets 中。

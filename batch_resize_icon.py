@@ -19,9 +19,6 @@ from pathlib import Path
 from typing import List, Tuple, Optional
 from PIL import Image
 
-# Import the Contents.json template
-from xcode_contents_json import CONTENTS_JSON_TEMPLATE
-
 
 # Configure logging
 logging.basicConfig(
@@ -46,7 +43,7 @@ class IconResizer:
     SOURCE_SIZE = 1024
 
     def __init__(self, source_image_path: str, output_dir: Optional[str] = None,
-                 auto_scale: bool = False, verbose: bool = False):
+                 auto_scale: bool = False, verbose: bool = False, prefix: str = '_'):
         """
         Initialize the IconResizer.
 
@@ -55,10 +52,12 @@ class IconResizer:
             output_dir: Custom output directory (optional)
             auto_scale: Automatically scale non-1024 images to 1024
             verbose: Enable verbose logging
+            prefix: Custom prefix for generated icon filenames (default: '_')
         """
         self.source_path = Path(source_image_path).resolve()
         self.output_dir = output_dir
         self.auto_scale = auto_scale
+        self.prefix = prefix
 
         if verbose:
             logger.setLevel(logging.DEBUG)
@@ -192,7 +191,7 @@ class IconResizer:
         generated_count = 0
         for size in self.ICON_SIZES:
             try:
-                output_filename = f"_{size}.png"
+                output_filename = f"{self.prefix}{size}.png"
                 output_path = self.output_path / output_filename
 
                 # Resize image
@@ -222,9 +221,42 @@ class IconResizer:
         """Generate the Contents.json file required by Xcode."""
         contents_path = self.output_path / "Contents.json"
 
+        # Define the icon mappings based on Apple's requirements
+        # Each entry specifies size, idiom, filename, and scale
+        icon_mappings = [
+            {"size": "20x20", "idiom": "iphone", "filename": f"{self.prefix}40.png", "scale": "2x"},
+            {"size": "20x20", "idiom": "iphone", "filename": f"{self.prefix}60.png", "scale": "3x"},
+            {"size": "29x29", "idiom": "iphone", "filename": f"{self.prefix}58.png", "scale": "2x"},
+            {"size": "29x29", "idiom": "iphone", "filename": f"{self.prefix}87.png", "scale": "3x"},
+            {"size": "40x40", "idiom": "iphone", "filename": f"{self.prefix}80.png", "scale": "2x"},
+            {"size": "40x40", "idiom": "iphone", "filename": f"{self.prefix}120.png", "scale": "3x"},
+            {"size": "60x60", "idiom": "iphone", "filename": f"{self.prefix}120.png", "scale": "2x"},
+            {"size": "60x60", "idiom": "iphone", "filename": f"{self.prefix}180.png", "scale": "3x"},
+            {"size": "20x20", "idiom": "ipad", "filename": f"{self.prefix}20.png", "scale": "1x"},
+            {"size": "20x20", "idiom": "ipad", "filename": f"{self.prefix}40.png", "scale": "2x"},
+            {"size": "29x29", "idiom": "ipad", "filename": f"{self.prefix}29.png", "scale": "1x"},
+            {"size": "29x29", "idiom": "ipad", "filename": f"{self.prefix}58.png", "scale": "2x"},
+            {"size": "40x40", "idiom": "ipad", "filename": f"{self.prefix}40.png", "scale": "1x"},
+            {"size": "40x40", "idiom": "ipad", "filename": f"{self.prefix}80.png", "scale": "2x"},
+            {"size": "76x76", "idiom": "ipad", "filename": f"{self.prefix}76.png", "scale": "1x"},
+            {"size": "76x76", "idiom": "ipad", "filename": f"{self.prefix}152.png", "scale": "2x"},
+            {"size": "83.5x83.5", "idiom": "ipad", "filename": f"{self.prefix}167.png", "scale": "2x"},
+            {"size": "1024x1024", "idiom": "ios-marketing", "filename": f"{self.prefix}1024.png", "scale": "1x"}
+        ]
+
+        # Create the complete Contents.json structure
+        contents = {
+            "images": icon_mappings,
+            "info": {
+                "version": 1,
+                "author": "xcode"
+            }
+        }
+
         try:
+            import json
             with open(contents_path, 'w', encoding='utf-8') as f:
-                f.write(CONTENTS_JSON_TEMPLATE)
+                json.dump(contents, f, indent=2)
             logger.info(f"Generated: Contents.json")
         except Exception as e:
             logger.error(f"Failed to generate Contents.json: {e}")
@@ -269,6 +301,12 @@ def parse_arguments() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        '-p', '--prefix',
+        default='_',
+        help='Custom prefix for generated icon filenames (default: "_")'
+    )
+
+    parser.add_argument(
         '-v', '--verbose',
         action='store_true',
         help='Enable verbose output'
@@ -307,7 +345,8 @@ def main() -> int:
             source_image_path=args.input_image,
             output_dir=args.output_dir,
             auto_scale=args.auto_scale,
-            verbose=args.verbose
+            verbose=args.verbose,
+            prefix=args.prefix
         )
         resizer.run()
         return 0
