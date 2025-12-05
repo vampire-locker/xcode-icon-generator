@@ -20,14 +20,14 @@ A Python tool that automatically generates all required iOS/iPadOS app icon size
 
 The tool generates the following sizes required for iOS and iPadOS:
 
-| Size (px) | Usage |
-|-----------|-------|
-| 20, 40, 60 | iPhone Notification, Settings, Spotlight |
-| 29, 58, 87 | iPhone Settings |
-| 80, 120, 180 | iPhone App Icon |
-| 76, 152 | iPad App Icon |
-| 167 | iPad Pro App Icon |
-| 1024 | App Store |
+| Size (px)    | Usage                                    |
+| ------------ | ---------------------------------------- |
+| 20, 40, 60   | iPhone Notification, Settings, Spotlight |
+| 29, 58, 87   | iPhone Settings                          |
+| 80, 120, 180 | iPhone App Icon                          |
+| 76, 152      | iPad App Icon                            |
+| 167          | iPad Pro App Icon                        |
+| 1024         | App Store                                |
 
 ## Requirements
 
@@ -37,12 +37,14 @@ The tool generates the following sizes required for iOS and iPadOS:
 ## Installation
 
 1. Clone this repository:
+
 ```bash
 git clone https://github.com/yourusername/BatchResizePicForXcode.git
 cd BatchResizePicForXcode
 ```
 
 2. Install dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -78,19 +80,20 @@ python batch_resize_icon.py icon_1024.png -v
 
 ### Command Line Options
 
-| Option | Description |
-|--------|-------------|
-| `input_image` | Path to source image (preferably 1024×1024 PNG) |
-| `-o, --output DIR` | Custom output directory name |
-| `-a, --auto-scale` | Automatically downscale images larger than 1024×1024 (upscaling not supported) |
-| `-p, --prefix PREFIX` | Custom prefix for icon filenames (default: "_") |
-| `-v, --verbose` | Enable verbose output |
-| `--version` | Show version information |
-| `-h, --help` | Show help message |
+| Option                | Description                                                                    |
+| --------------------- | ------------------------------------------------------------------------------ |
+| `input_image`         | Path to source image (preferably 1024×1024 PNG)                                |
+| `-o, --output DIR`    | Custom output directory name                                                   |
+| `-a, --auto-scale`    | Automatically downscale images larger than 1024×1024 (upscaling not supported) |
+| `-p, --prefix PREFIX` | Custom prefix for icon filenames (default: "\_")                               |
+| `-v, --verbose`       | Enable verbose output                                                          |
+| `--version`           | Show version information                                                       |
+| `-h, --help`          | Show help message                                                              |
 
 ## Best Practices
 
 For optimal results, your source image should be:
+
 - **1024×1024 pixels** - Required size for App Store
 - **PNG format** - Supports transparency
 - **Transparent background** - iOS icon standard
@@ -99,6 +102,7 @@ For optimal results, your source image should be:
 ## Output
 
 The tool creates a folder (e.g., `AppIcon.appiconset_1234567890`) containing:
+
 - 13 PNG files with all required icon sizes (default names: `_20.png`, `_29.png`, etc., or custom with `--prefix`)
 - `Contents.json` - Xcode configuration file
 
@@ -131,6 +135,7 @@ You can now drag the 'AppIcon.appiconset_1701234567' folder into Xcode.
 ## Troubleshooting
 
 ### "Image must be 1024x1024" or size error
+
 - **If your image is larger than 1024×1024**: Use `--auto-scale` to automatically downscale it:
   ```bash
   python batch_resize_icon.py large_icon_2048.png --auto-scale
@@ -138,9 +143,11 @@ You can now drag the 'AppIcon.appiconset_1701234567' folder into Xcode.
 - **If your image is smaller than 1024×1024**: You must use a higher quality source image. Upscaling will produce blurry icons that may fail App Store review. Please create or obtain a proper 1024×1024 source image.
 
 ### "Unsupported format"
+
 The tool only supports PNG, JPG, and JPEG formats. Convert your image first.
 
 ### "Image doesn't have transparency"
+
 This is a warning, not an error. iOS icons typically use transparent backgrounds, but you can proceed if your design requires a solid background.
 
 ## Contributing
@@ -160,6 +167,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Changelog
 
 ### Version 2.0 (2025)
+
 - Complete refactor with modern Python practices
 - Added command-line argument support
 - Added input validation and error handling
@@ -169,12 +177,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Added comprehensive documentation
 
 ### Version 1.0 (2018)
+
 - Initial release
 - Basic icon generation functionality
 
 ## Author
 
-Original Author: vampire (2018)
+Original Author: vampire-locker (2018)
 Refactored: 2025
 
 ## Acknowledgments

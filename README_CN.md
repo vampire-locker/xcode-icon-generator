@@ -174,7 +174,7 @@ You can now drag the 'AppIcon.appiconset_1701234567' folder into Xcode.
 
 ## 作者
 
-原作者：vampire (2018)
+原作者：vampire-locker (2018)
 重构：2025
 
 ## 致谢

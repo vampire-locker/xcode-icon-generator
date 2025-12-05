@@ -5,7 +5,7 @@
 Batch Resize Icon for Xcode
 Generate all required iOS/iPadOS app icon sizes from a single 1024x1024 image.
 
-Author: vampire
+Author: vampire-locker
 Updated: 2025
 License: MIT
 """
